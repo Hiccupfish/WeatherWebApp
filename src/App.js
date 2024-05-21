@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, Typography, Box, Link, Dialog,Divider } from '@mui/material';
+import { Button, Typography, Box, Link, Dialog, Divider } from '@mui/material';
 import Header from './Header';
 import WeatherInfo from './WeatherInfo';
 import MajorCityWeather from './MajorCityWeather';
-import './App.css';
-
 import MoreInformation from './MoreInformation';
+import './App.css';
+import clearsky from './pictures/clearsky.jpeg';
+import moderaterain from './pictures/moderaterain.jpeg';
 
 function App() {
   const apiKey = '2a2ba64f56cc47b7725e9239917543cf';
@@ -46,6 +47,21 @@ function App() {
     setMetric(metric === 'celsius' ? 'kelvin' : 'celsius');
   };
 
+  const descriptionPicture = (description) => {
+    const pictures = {
+      clearsky,
+      moderaterain
+    };
+
+    if (description.includes("clear")) {
+      return pictures.clearsky;
+    } else if (description.includes("rain")) {
+      return pictures.moderaterain;
+    } else {
+      return null; // Default image or handle other weather types
+    }
+  };
+
   useEffect(() => {
     const fetchInitialWeather = async () => {
       try {
@@ -75,8 +91,16 @@ function App() {
     <div className="app-container">
       <Header />
       <Divider />
-      
-      <WeatherInfo handleSubmit={handleSubmit} location={location} setLocation={setLocation} weatherData={weatherData} />
+      <WeatherInfo 
+        handleSubmit={handleSubmit} 
+        location={location} 
+        setLocation={setLocation} 
+        descriptionPicture={descriptionPicture} 
+        weatherData={weatherData} 
+        error={error}
+        metric={metric}
+        setMetric={setMetric}
+      />
       {error && <p>Failed to process your request, ensure correct location spelling and network availability.</p>}
       <div>
         {/* Button to open More Information */}
